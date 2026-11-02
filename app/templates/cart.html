@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Your order · Spice &amp; Slice{% endblock %}
+{% block content %}
+<h1>Your order</h1>
+{% if not lines %}
+<p>Your order is empty. <a href="{{ url_for('shop.menu') }}">Browse the menu</a>.</p>
+{% else %}
+<form method="post" action="{{ url_for('shop.update_cart') }}">
+  <input type="hidden" name="csrf" value="{{ csrf_token }}">
+  <table>
+    <thead><tr><th scope="col">Item</th><th scope="col">Quantity</th><th scope="col">Subtotal</th></tr></thead>
+    <tbody>
+    {% for line in lines %}
+      <tr>
+        <td>{{ line.item.name }}</td>
+        <td><label class="sr-only" for="q{{ line.item.id }}">Quantity of {{ line.item.name }}</label>
+          <input id="q{{ line.item.id }}" type="number" name="qty-{{ line.item.id }}" min="0" max="{{ max_qty }}" value="{{ line.qty }}"></td>
+        <td>{{ line.subtotal | money }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+    <tfoot><tr><th scope="row" colspan="2">Total</th><td><strong>{{ total | money }}</strong></td></tr></tfoot>
+  </table>
+  <p class="hint">Set a quantity to 0 to remove an item.</p>
+  <div class="actions"><button type="submit" class="secondary">Update order</button>
+  <a class="button" href="{{ url_for('shop.checkout') }}">Checkout</a></div>
+</form>
+{% endif %}
+{% endblock %}

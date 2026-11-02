@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Checkout · Spice &amp; Slice{% endblock %}
+{% block content %}
+<h1>Checkout</h1>
+<p class="lead">{{ lines | length }} item{{ 's' if lines | length != 1 }} · Total <strong>{{ total | money }}</strong>. Pay when you collect.</p>
+<form method="post" class="stack" novalidate>
+  <input type="hidden" name="csrf" value="{{ csrf_token }}">
+  {% for field, label, kind in [('name', 'Name', 'text'), ('phone', 'Phone number', 'tel'), ('notes', 'Notes for the kitchen (optional)', 'text')] %}
+  <label for="{{ field }}">{{ label }}</label>
+  <input id="{{ field }}" name="{{ field }}" type="{{ kind }}" value="{{ form[field] }}"
+         {% if errors[field] %}aria-invalid="true" aria-describedby="{{ field }}-error"{% endif %}>
+  {% if errors[field] %}<p class="error" id="{{ field }}-error">{{ errors[field] }}</p>{% endif %}
+  {% endfor %}
+  <button type="submit">Place order</button>
+</form>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Menu</h1>
+<p class="lead">Order ahead for pickup. Prices include tax.</p>
+{% for category, items in categories.items() %}
+<section>
+  <h2>{{ category }}</h2>
+  <ul class="menu">
+    {% for item in items %}
+    <li class="item">
+      <div><h3>{{ item.name }}</h3><p>{{ item.description }}</p></div>
+      <form method="post" action="{{ url_for('shop.add_to_cart') }}" class="add">
+        <input type="hidden" name="csrf" value="{{ csrf_token }}">
+        <input type="hidden" name="item_id" value="{{ item.id }}">
+        <span class="price">{{ item.price_cents | money }}</span>
+        <label class="sr-only" for="qty-{{ item.id }}">Quantity of {{ item.name }}</label>
+        <input id="qty-{{ item.id }}" name="quantity" type="number" min="1" max="20" value="1">
+        <button type="submit">Add</button>
+      </form>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endfor %}
+{% endblock %}

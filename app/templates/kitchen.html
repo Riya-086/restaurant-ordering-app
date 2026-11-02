@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Kitchen · Spice &amp; Slice{% endblock %}
+{% block head %}<meta http-equiv="refresh" content="20">{% endblock %}
+{% block content %}
+<div class="row"><h1>Kitchen</h1>
+<form method="post" action="{{ url_for('shop.kitchen_logout') }}"><input type="hidden" name="csrf" value="{{ csrf_token }}"><button class="secondary">Sign out</button></form></div>
+{% if not orders %}<p>No open orders.</p>{% endif %}
+<ul class="tickets">
+{% for order in orders %}
+  <li class="ticket">
+    <h2>#{{ order.code }} · {{ order.customer_name }}</h2>
+    <p class="status status-{{ order.status }}">{{ status_labels[order.status] }}</p>
+    <ul>{% for item in items[order.id] %}<li>{{ item.quantity }} × {{ item.name }}</li>{% endfor %}</ul>
+    {% if order.notes %}<p class="hint">Note: {{ order.notes }}</p>{% endif %}
+    <div class="actions">
+      {% if flow.get(order.status) %}
+      <form method="post" action="{{ url_for('shop.change_status', order_id=order.id) }}">
+        <input type="hidden" name="csrf" value="{{ csrf_token }}"><input type="hidden" name="status" value="{{ flow[order.status] }}">
+        <button>Mark {{ status_labels[flow[order.status]] | lower }}</button></form>
+      {% endif %}
+      <form method="post" action="{{ url_for('shop.change_status', order_id=order.id) }}">
+        <input type="hidden" name="csrf" value="{{ csrf_token }}"><input type="hidden" name="status" value="cancelled">
+        <button class="danger">Cancel</button></form>
+    </div>
+  </li>
+{% endfor %}
+</ul>
+{% endblock %}

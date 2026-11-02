@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Order {{ order.code }} · Spice &amp; Slice{% endblock %}
+{% block head %}{% if order.status not in ('collected', 'cancelled') %}<meta http-equiv="refresh" content="30">{% endif %}{% endblock %}
+{% block content %}
+<h1>Order {{ order.code }}</h1>
+<p class="status status-{{ order.status }}">{{ status_labels[order.status] }}</p>
+<p>Thanks, {{ order.customer_name }}. Keep this page open: it refreshes every 30 seconds.</p>
+<table>
+  <tbody>{% for item in items %}<tr><td>{{ item.quantity }} × {{ item.name }}</td><td>{{ (item.unit_price_cents * item.quantity) | money }}</td></tr>{% endfor %}</tbody>
+  <tfoot><tr><th scope="row">Total</th><td><strong>{{ order.total_cents | money }}</strong></td></tr></tfoot>
+</table>
+{% endblock %}
